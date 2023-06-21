@@ -10,20 +10,21 @@ license = {text = "MIT"}
 classifiers = ["Programming Language :: Python"]
 keywords = []
 requires-python = ">=3.8"
-dependencies = []
+dependencies = ["typer[all]"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
 test = [
     "pytest",
-    "pytest-cov"
+    "pytest-cov",
+    "pytest-mypy"
 ]
 
 [project.urls]
 homepage = "https://github.com/nens/denoter"
 
 [project.scripts]
-denoter = "denoter.scripts:main"
+denoter = "denoter.scripts:app"
 
 [tool.setuptools]
 zip-safe = false
