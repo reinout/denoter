@@ -27,9 +27,9 @@ A virtualenv puts its commands in the `bin` directory. So `bin/pip`,
 
 There will be a script you can run like this:
 
-    $ bin/run-denoter
+    $ bin/denoter
 
-It runs the `main()` function in `[denoter/scripts.py`,
+It runs the `main()` function in `denoter/scripts.py`,
 adjust that if necessary. The script is configured in
 `TODO, MISSING NOW` (see `entry_points`).
 
