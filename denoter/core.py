@@ -3,6 +3,8 @@ import logging
 from dataclasses import dataclass
 from pathlib import Path
 
+from denoter import utils
+
 # from typing import Optional
 
 logger = logging.getLogger(__name__)
@@ -35,7 +37,13 @@ class BasicFileInfo:
 def extract_basic_file_info(file: Path) -> BasicFileInfo:
     name = file.stem  # Stem is the filename without the extension.
     extension = file.suffix  # Note: including the leading dot.
-    creation_date = datetime.datetime.fromtimestamp(file.stat().st_ctime)
+
+    # Multiple OSs have different ways of handling this.
+    stats = file.stat()
+    timestamp1 = stats.st_ctime
+    timestamp2 = stats.st_mtime
+    earliest = min([timestamp1, timestamp2])
+    creation_date = datetime.datetime.fromtimestamp(earliest)
     result = BasicFileInfo(name=name, extension=extension, creation_date=creation_date)
     logger.debug("Basic file info extracted from %s: %s", file, result)
     return result
@@ -50,3 +58,12 @@ def metadata_from_file(file: Path) -> DenoteMetadata:
         timestamp=info.creation_date,
         tags=[],
     )
+
+
+def filename_from_metadata(metadata: DenoteMetadata) -> str:
+    date = metadata.timestamp.strftime("%Y%m%dT%H%M%S")
+    slugified = utils.slugify(metadata.title)
+    name = "--".join([date, slugified])
+    if metadata.tags:
+        name = name + "__" + "_".join(metadata.tags)
+    return name + metadata.extension

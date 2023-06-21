@@ -20,4 +20,6 @@ def main(
     log_level = logging.DEBUG and verbose or logging.INFO
     logging.basicConfig(level=log_level, format="%(levelname)s: %(message)s")
     for file in files:
-        print(core.metadata_from_file(file))
+        metadata = core.metadata_from_file(file)
+        new_filename = core.filename_from_metadata(metadata)
+        print(new_filename)
