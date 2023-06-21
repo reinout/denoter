@@ -1,5 +1,6 @@
-import typer
 import logging
+
+import typer
 
 logger = logging.getLogger(__name__)
 app = typer.Typer()
