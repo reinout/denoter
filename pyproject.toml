@@ -9,7 +9,7 @@ license = {text = "MIT"}
 # Get classifier strings from http://www.python.org/pypi?%3Aaction=list_classifiers
 classifiers = ["Programming Language :: Python"]
 keywords = []
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 dependencies = ["typer[all]"]
 dynamic = ["version"]
 

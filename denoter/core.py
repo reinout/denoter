@@ -1,14 +1,13 @@
 import datetime
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
 
 
 @dataclass
 class DenoteMetadata:
     title: str
     timestamp: datetime.datetime
-    tags: List[str]
+    tags: list[str]
 
 
 @dataclass
@@ -21,7 +20,7 @@ class BasicFileMetadata:
 class DenoteFileMetadata:
     creation_date: datetime.datetime
     slug: str
-    tags: List[str]
+    tags: list[str]
 
 
 def basic_file_metadata(file: Path) -> BasicFileMetadata:
