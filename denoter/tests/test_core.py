@@ -1,6 +1,8 @@
 import datetime
 from pathlib import Path
 
+import pytest
+
 from denoter import core
 
 
@@ -57,3 +59,16 @@ def test_filename_from_metadata_2():
     )
     result = core.filename_from_metadata(metadata)
     assert result == "19721225T000000--reinout-is-geweldig__verjaardag_feit.txt"
+
+
+def test_extract_textfile_info_1():
+    this_file = Path(__file__)  # Not a .txt/.md
+    with pytest.raises(AssertionError):
+        core.extract_textfile_info(this_file)
+
+
+def test_extract_textfile_info_2():
+    this_file = Path(__file__)
+    example_textfile = this_file.parent / "example.md"
+    result = core.extract_textfile_info(example_textfile)
+    assert result.title == "title on the first line"
