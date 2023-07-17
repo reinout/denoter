@@ -87,14 +87,22 @@ def extract_textfile_info(file: Path) -> TextfileInfo:
 
 
 def metadata_from_file(file: Path) -> DenoteMetadata:
-    info = extract_basic_file_info(file)
-    # We assume for the moment we have nothing else.
-    return DenoteMetadata(
-        title=info.name,
-        extension=info.extension,
-        timestamp=info.creation_date,
+    basic_info = extract_basic_file_info(file)
+    result = DenoteMetadata(
+        title=basic_info.name,
+        extension=basic_info.extension,
+        timestamp=basic_info.creation_date,
         tags=[],
     )
+    if utils.is_denote_file(file):
+        # We've already been ingested, so we know better.
+        result = extract_denote_file_info(file)
+    if file.suffix in utils.TEXTFILE_EXTENSIONS:
+        text_title = extract_textfile_info(file).title
+        if text_title:
+            result.title = text_title
+
+    return result
 
 
 def filename_from_metadata(metadata: DenoteMetadata) -> str:

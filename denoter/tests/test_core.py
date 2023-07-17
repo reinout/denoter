@@ -21,6 +21,15 @@ def test_metadata_from_file():
     assert result.tags == []
 
 
+def test_metadata_from_file_2():
+    this_file = Path(__file__)
+    example = this_file.parent / "20230717T202456--title-on-the-first-line.md"
+    result = core.metadata_from_file(example)
+    assert result.title == "title on the first line"
+    assert result.extension == ".md"
+    assert result.tags == []
+
+
 def test_extract_denote_file_info_1():
     example = Path("0-inbox/20230717T143205--test-note.md")
     result = core.extract_denote_file_info(example)

@@ -52,20 +52,11 @@ def update_title(
         if not utils.is_denote_file(file):
             logger.warn("Not a denote file, ignoring: %s", file)
             continue
-        metadata = core.extract_denote_file_info(file)
-
-        title = None
-        if file.suffix in utils.TEXTFILE_EXTENSIONS:
-            title = core.extract_textfile_info(file).title
-
-        if not title:
-            logger.warn("%s has no title", file)
-            continue
-        metadata.title = title
+        metadata = core.metadata_from_file(file)
 
         new_filename = core.filename_from_metadata(metadata)
         if new_filename == file.name:
-            logger.info("Title of %sis still the same", file)
+            logger.info("Title of %s is still the same", file)
             continue
 
         new_filepath = file.parent / new_filename
