@@ -13,6 +13,7 @@ DENOTE_FILE_REGEX = re.compile(
     """,
     re.VERBOSE,
 )
+TEXTFILE_EXTENSIONS = [".md", ".rst", ".txt"]
 
 
 def slugify(title: str) -> str:
@@ -30,6 +31,16 @@ def slugify(title: str) -> str:
     )
     value = re.sub(r"[^\w\s-]", "", value).strip().lower()
     return re.sub(r"[-\s]+", "-", value)
+
+
+def unslugify(title: str) -> str:
+    """Return title from a previously sluggified title
+
+    Its use is to compare a title, extracted from within a file, to the title
+    extracted from a slugified filename.
+
+    """
+    return title.replace("-", " ")
 
 
 def is_denote_file(file: Path) -> bool:

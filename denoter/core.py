@@ -27,11 +27,11 @@ class BasicFileInfo:
     creation_date: datetime.datetime
 
 
-# @dataclass
-# class DenoteFileInfo:
-#     creation_date: datetime.datetime
-#     slug: str
-#     tags: list[str]
+@dataclass
+class TextfileInfo:
+    """Info from within a txt/rst/md file"""
+
+    title: str
 
 
 def extract_basic_file_info(file: Path) -> BasicFileInfo:
@@ -64,7 +64,7 @@ def extract_denote_file_info(file: Path) -> DenoteMetadata:
         title = remainder
         tags = []
 
-    title = title.replace("-", " ")
+    title = utils.unslugify(title)
 
     result = DenoteMetadata(
         title=title,
@@ -74,6 +74,16 @@ def extract_denote_file_info(file: Path) -> DenoteMetadata:
     )
     logger.debug("Denote file info extracted from %s: %s", file, result)
     return result
+
+
+def extract_textfile_info(file: Path) -> TextfileInfo:
+    assert file.suffix in utils.TEXTFILE_EXTENSIONS
+    lines = file.read_text().split("\n")
+    title = lines[0]
+    if file.suffix == ".md":
+        title.lstrip("# ")
+    title = utils.unslugify(utils.slugify(title))
+    return TextfileInfo(title=title)
 
 
 def metadata_from_file(file: Path) -> DenoteMetadata:
