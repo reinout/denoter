@@ -64,3 +64,30 @@ def update_title(
         if rename:
             file.rename(new_filepath)
             logger.info("Renamed %s to %s", file, new_filepath)
+
+
+@app.command()
+def add_tag(
+    ctx: typer.Context,
+    tag: str,
+    files: Annotated[
+        list[Path], typer.Argument(help="Files to rename.", dir_okay=False, exists=True)
+    ],
+):
+    for file in files:
+        if not utils.is_denote_file(file):
+            logger.warn("Not a denote file, ignoring: %s", file)
+            continue
+        metadata = core.metadata_from_file(file)
+        metadata.tags.add(tag)
+
+        new_filename = core.filename_from_metadata(metadata)
+        if new_filename == file.name:
+            logger.info("Title of %s is still the same", file)
+            continue
+
+        new_filepath = file.parent / new_filename
+        rename = typer.confirm(f"Rename {file} to {new_filename}?")
+        if rename:
+            file.rename(new_filepath)
+            logger.info("Renamed %s to %s", file, new_filepath)
