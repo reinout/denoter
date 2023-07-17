@@ -18,7 +18,7 @@ def test_metadata_from_file():
     result = core.metadata_from_file(this_file)
     assert result.title == "test_core"
     assert result.extension == ".py"
-    assert result.tags == []
+    assert result.tags == set()
 
 
 def test_metadata_from_file_2():
@@ -27,7 +27,7 @@ def test_metadata_from_file_2():
     result = core.metadata_from_file(example)
     assert result.title == "title on the first line"
     assert result.extension == ".md"
-    assert result.tags == []
+    assert result.tags == set()
 
 
 def test_extract_denote_file_info_1():
@@ -36,7 +36,7 @@ def test_extract_denote_file_info_1():
     assert result.title == "test note"
     assert result.extension == ".md"
     assert result.timestamp.year == 2023
-    assert result.tags == []
+    assert result.tags == set()
 
 
 def test_extract_denote_file_info_2():
@@ -45,7 +45,7 @@ def test_extract_denote_file_info_2():
     assert result.title == "test note"
     assert result.extension == ".md"
     assert result.timestamp.year == 2023
-    assert result.tags == ["zettel"]
+    assert result.tags == {"zettel"}
 
 
 def test_filename_from_metadata_1():
@@ -53,7 +53,7 @@ def test_filename_from_metadata_1():
         title="reinout is geweldig",
         extension=".txt",
         timestamp=datetime.datetime(year=1972, month=12, day=25),
-        tags=[],
+        tags=set(),
     )
     result = core.filename_from_metadata(metadata)
     assert result == "19721225T000000--reinout-is-geweldig.txt"
@@ -64,10 +64,10 @@ def test_filename_from_metadata_2():
         title="reinout is geweldig",
         extension=".txt",
         timestamp=datetime.datetime(year=1972, month=12, day=25),
-        tags=["verjaardag", "feit"],
+        tags={"verjaardag", "feit"},
     )
     result = core.filename_from_metadata(metadata)
-    assert result == "19721225T000000--reinout-is-geweldig__verjaardag_feit.txt"
+    assert result == "19721225T000000--reinout-is-geweldig__feit_verjaardag.txt"
 
 
 def test_extract_textfile_info_1():

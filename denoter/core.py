@@ -17,7 +17,7 @@ class DenoteMetadata:
     title: str
     extension: str
     timestamp: datetime.datetime
-    tags: list[str]
+    tags: set[str]
 
 
 @dataclass
@@ -70,7 +70,7 @@ def extract_denote_file_info(file: Path) -> DenoteMetadata:
         title=title,
         extension=extension,
         timestamp=timestamp,
-        tags=tags,
+        tags=set(tags),
     )
     logger.debug("Denote file info extracted from %s: %s", file, result)
     return result
@@ -92,7 +92,7 @@ def metadata_from_file(file: Path) -> DenoteMetadata:
         title=basic_info.name,
         extension=basic_info.extension,
         timestamp=basic_info.creation_date,
-        tags=[],
+        tags=set(),
     )
     if utils.is_denote_file(file):
         # We've already been ingested, so we know better.
@@ -110,5 +110,5 @@ def filename_from_metadata(metadata: DenoteMetadata) -> str:
     slugified = utils.slugify(metadata.title)
     name = "--".join([id, slugified])
     if metadata.tags:
-        name = name + "__" + "_".join(metadata.tags)
+        name = name + "__" + "_".join(sorted(metadata.tags))
     return name + metadata.extension
