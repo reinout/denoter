@@ -1,5 +1,18 @@
 import re
 import unicodedata
+from pathlib import Path
+
+DENOTE_DATE_FORMAT = "%Y%m%dT%H%M%S"
+DENOTE_FILE_REGEX = re.compile(
+    r"""
+    ^       # Start of string
+    \d{8}   # yyyymmdd
+    T       # T
+    \d{6}   # hhmmss
+    \-\-    # --
+    """,
+    re.VERBOSE,
+)
 
 
 def slugify(title: str) -> str:
@@ -17,3 +30,7 @@ def slugify(title: str) -> str:
     )
     value = re.sub(r"[^\w\s-]", "", value).strip().lower()
     return re.sub(r"[-\s]+", "-", value)
+
+
+def is_denote_file(file: Path) -> bool:
+    return bool(DENOTE_FILE_REGEX.search(file.name))
