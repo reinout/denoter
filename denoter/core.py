@@ -94,6 +94,8 @@ def metadata_from_file(file: Path) -> DenoteMetadata:
         timestamp=basic_info.creation_date,
         tags=set(),
     )
+    if utils.is_the_archive_file(file):
+        result.timestamp = utils.timestamp_from_the_archive(file.name)
     if utils.is_denote_file(file):
         # We've already been ingested, so we know better.
         result = extract_denote_file_info(file)

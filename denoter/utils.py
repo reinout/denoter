@@ -1,3 +1,4 @@
+import datetime
 import re
 import unicodedata
 from pathlib import Path
@@ -10,6 +11,15 @@ DENOTE_FILE_REGEX = re.compile(
     T       # T
     \d{6}   # hhmmss
     \-\-    # --
+    """,
+    re.VERBOSE,
+)
+THE_ARCHIVE_DATE_FORMAT = "%Y%m%d%H%M"
+THE_ARCHIVE_FILE_REGEX = re.compile(
+    r"""
+    ^       # Start of string
+    \d{12}  # yyyymmddhhmm
+    \-      # -
     """,
     re.VERBOSE,
 )
@@ -45,3 +55,12 @@ def unslugify(title: str) -> str:
 
 def is_denote_file(file: Path) -> bool:
     return bool(DENOTE_FILE_REGEX.search(file.name))
+
+
+def is_the_archive_file(file: Path) -> bool:
+    return bool(THE_ARCHIVE_FILE_REGEX.search(file.name))
+
+
+def timestamp_from_the_archive(filename: str) -> datetime.datetime:
+    id = filename.split("-")[0]
+    return datetime.datetime.strptime(id, THE_ARCHIVE_DATE_FORMAT)
