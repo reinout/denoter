@@ -6,78 +6,105 @@ import pytest
 from denoter import core
 
 
-def test_extract_basic_file_info():
+@pytest.fixture
+def metadata():
+    return core.DenoteMetadata()
+
+
+def test_metadata_empty_init():
+    # DenoteMetadata should have defaults for everything.
+    core.DenoteMetadata()
+
+
+def test_extract_basic_filename_info(metadata):
     this_file = Path(__file__)
-    result = core.extract_basic_file_info(this_file)
-    assert result.name == "test_core"
-    assert result.extension == ".py"
+    core.extract_basic_filename_info(this_file, metadata)
+    assert metadata.title == "test core"
+    assert metadata.extension == ".py"
 
 
-def test_metadata_from_file():
+def test_estimate_file_creation_date(metadata):
     this_file = Path(__file__)
-    result = core.metadata_from_file(this_file)
-    assert result.title == "test_core"
-    assert result.extension == ".py"
-    assert result.tags == set()
+    core.estimate_file_creation_date(this_file, metadata)
+    assert metadata.timestamp.year >= 2023
 
 
-def test_metadata_from_file_2():
+def test_reuse_the_archive_filename_timestamp(metadata):
+    example = Path("202107201000-forward-movement.md")
+    core.reuse_the_archive_filename_timestamp(example, metadata)
+    assert metadata.timestamp.year == 2021
+    assert metadata.timestamp.month == 7
+    assert metadata.title == "forward movement"
+
+
+def test_extract_denote_filename_info_1(metadata):
+    example = Path("0-inbox/20230717T143205--test-note.md")
+    core.extract_denote_filename_info(example, metadata)
+    assert metadata.title == "test note"
+    assert metadata.timestamp.year == 2023
+    assert metadata.tags == set()
+
+
+def test_extract_denote_filename_info_2(metadata):
+    example = Path("0-inbox/20230717T143205--test-note__zettel.md")
+    core.extract_denote_filename_info(example, metadata)
+    assert metadata.title == "test note"
+    assert metadata.timestamp.year == 2023
+    assert metadata.tags == {"zettel"}
+
+
+def test_extract_title_from_text_1(metadata):
+    text = """Title on the first line
+
+    Something more.
+    """
+    core.extract_title_from_text(text, metadata)
+    assert metadata.title == "title on the first line"
+
+
+def test_extract_title_from_text_2(metadata):
+    text = """# Markdown title on the first line
+
+    Something more.
+    """
+    core.extract_title_from_text(text, metadata)
+    assert metadata.title == "markdown title on the first line"
+
+
+def test_metadata_from_file(metadata):
+    this_file = Path(__file__)
+    metadata = core.metadata_from_file(this_file)
+    assert metadata.title == "test core"
+    assert metadata.extension == ".py"
+    assert metadata.tags == set()
+
+
+def test_metadata_from_file_2(metadata):
     this_file = Path(__file__)
     example = this_file.parent / "20230717T202456--title-on-the-first-line.md"
-    result = core.metadata_from_file(example)
-    assert result.title == "title on the first line"
-    assert result.extension == ".md"
-    assert result.tags == set()
+    metadata = core.metadata_from_file(example)
+    assert metadata.title == "title on the first line"
+    assert metadata.extension == ".md"
+    assert metadata.tags == set()
 
 
-def test_extract_denote_file_info_1():
-    example = Path("0-inbox/20230717T143205--test-note.md")
-    result = core.extract_denote_file_info(example)
-    assert result.title == "test note"
-    assert result.extension == ".md"
-    assert result.timestamp.year == 2023
-    assert result.tags == set()
-
-
-def test_extract_denote_file_info_2():
-    example = Path("0-inbox/20230717T143205--test-note__zettel.md")
-    result = core.extract_denote_file_info(example)
-    assert result.title == "test note"
-    assert result.extension == ".md"
-    assert result.timestamp.year == 2023
-    assert result.tags == {"zettel"}
-
-
-def test_filename_from_metadata_1():
+def test_filename_from_metadata_1(metadata):
     metadata = core.DenoteMetadata(
         title="reinout is geweldig",
         extension=".txt",
         timestamp=datetime.datetime(year=1972, month=12, day=25),
         tags=set(),
     )
-    result = core.filename_from_metadata(metadata)
-    assert result == "19721225T000000--reinout-is-geweldig.txt"
+    metadata = core.filename_from_metadata(metadata)
+    assert metadata == "19721225T000000--reinout-is-geweldig.txt"
 
 
-def test_filename_from_metadata_2():
+def test_filename_from_metadata_2(metadata):
     metadata = core.DenoteMetadata(
         title="reinout is geweldig",
         extension=".txt",
         timestamp=datetime.datetime(year=1972, month=12, day=25),
         tags={"verjaardag", "feit"},
     )
-    result = core.filename_from_metadata(metadata)
-    assert result == "19721225T000000--reinout-is-geweldig__feit_verjaardag.txt"
-
-
-def test_extract_textfile_info_1():
-    this_file = Path(__file__)  # Not a .txt/.md
-    with pytest.raises(AssertionError):
-        core.extract_textfile_info(this_file)
-
-
-def test_extract_textfile_info_2():
-    this_file = Path(__file__)
-    example_textfile = this_file.parent / "example.md"
-    result = core.extract_textfile_info(example_textfile)
-    assert result.title == "title on the first line"
+    metadata = core.filename_from_metadata(metadata)
+    assert metadata == "19721225T000000--reinout-is-geweldig__feit_verjaardag.txt"

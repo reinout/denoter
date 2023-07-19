@@ -1,4 +1,3 @@
-import datetime
 import re
 import unicodedata
 from pathlib import Path
@@ -40,16 +39,21 @@ def slugify(title: str) -> str:
         unicodedata.normalize("NFKD", title).encode("ascii", "ignore").decode("ascii")
     )
     value = re.sub(r"[^\w\s-]", "", value).strip().lower()
+    value = value.replace("_", " ")  # Extra compared to stackoverflow.
     return re.sub(r"[-\s]+", "-", value)
 
 
-def unslugify(title: str) -> str:
-    """Return title from a previously sluggified title
+def slug_to_title(title: str) -> str:
+    """Return title from a (possibly previously sluggified) title
 
     Its use is to compare a title, extracted from within a file, to the title
     extracted from a slugified filename.
 
+    And also to take a filename, clean it up and turn it into something that
+    looks like a title.
+
     """
+    title = slugify(title)
     return title.replace("-", " ")
 
 
@@ -61,6 +65,5 @@ def is_the_archive_file(file: Path) -> bool:
     return bool(THE_ARCHIVE_FILE_REGEX.search(file.name))
 
 
-def timestamp_from_the_archive(filename: str) -> datetime.datetime:
-    id = filename.split("-")[0]
-    return datetime.datetime.strptime(id, THE_ARCHIVE_DATE_FORMAT)
+def is_textfile(file: Path) -> bool:
+    return file.suffix in TEXTFILE_EXTENSIONS
