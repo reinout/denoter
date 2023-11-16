@@ -4,6 +4,14 @@ Introduction
 
 Usage, etc.
 
+
+## Aantekeningen
+
+Naamgeving: `2023213123434234-iets-nuttigs.md` bevalt me niet
+zo. `iets-nuttigs-RR0000001.md` bevalt me beter. Hoe kort kan zo'n `RR` tag
+zijn? Niet alles hoeft het te hebben.
+
+
 ## Installation
 
 We can be installed with:
