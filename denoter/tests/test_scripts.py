@@ -1,4 +1,5 @@
 """Tests for script.py"""
+
 import pytest
 
 from denoter import scripts
