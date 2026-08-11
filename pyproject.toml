@@ -10,7 +10,7 @@ license = {text = "MIT"}
 classifiers = ["Programming Language :: Python"]
 keywords = []
 requires-python = ">=3.9"
-dependencies = ["typer[all]"]
+dependencies = ["typer"]
 dynamic = ["version"]
 
 [project.optional-dependencies]
